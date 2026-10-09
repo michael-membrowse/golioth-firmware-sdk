@@ -1,5 +1,7 @@
 # Golioth Firmware SDK
 
+[![MemBrowse](https://membrowse.com/badge.svg)](https://membrowse.com/public/golioth/golioth-firmware-sdk)
+
 A software development kit for connecting embedded devices to the
 [Golioth](https://golioth.io) IoT cloud.
 

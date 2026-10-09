@@ -1,0 +1,29 @@
+[
+  {
+    "target_name": "linux-x86_64",
+    "setup_cmd": "sudo apt-get update && sudo apt-get install -y build-essential cmake libssl-dev",
+    "build_cmd": "cd examples/linux/golioth_basics && printf '#define GOLIOTH_PSK_ID \"device@project\"\\n#define GOLIOTH_PSK \"secret\"\\n' > credentials.inc && rm -rf build && cmake -B build -DCMAKE_EXE_LINKER_FLAGS=\"-Wl,-Map=$PWD/build/golioth_basics.map\" && cmake --build build -j$(nproc)",
+    "elf": "examples/linux/golioth_basics/build/golioth_basics",
+    "ld": "",
+    "map_file": "examples/linux/golioth_basics/build/golioth_basics.map",
+    "linker_vars": ""
+  },
+  {
+    "target_name": "nucleo_h563zi-zephyr",
+    "setup_cmd": "sudo apt-get update && sudo apt-get install -y --no-install-recommends git cmake ninja-build gperf ccache dfu-util device-tree-compiler wget python3-dev xz-utils file make gcc && pip install west && wget -q -P /tmp https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.17.4/zephyr-sdk-0.17.4_linux-x86_64_minimal.tar.xz && tar xf /tmp/zephyr-sdk-0.17.4_linux-x86_64_minimal.tar.xz -C $HOME && $HOME/zephyr-sdk-0.17.4/setup.sh -t arm-zephyr-eabi -h -c && echo \"ZEPHYR_SDK_INSTALL_DIR=$HOME/zephyr-sdk-0.17.4\" >> $GITHUB_ENV && mkdir -p ../.west && printf '[manifest]\\npath = %s\\nfile = .ci-west-zephyr.yml\\n' \"$(basename $PWD)\" > ../.west/config && west config manifest.project-filter -- -hal_espressif,-hal_nordic,-hal_nxp,-mcuboot,-net-tools,-segger && west update -o=--depth=1 -n && pip install -r ../zephyr/scripts/requirements-base.txt",
+    "build_cmd": "west build -p always -b nucleo_h563zi/stm32h563xx examples/zephyr/hello -d build/hello",
+    "elf": "build/hello/zephyr/zephyr.elf",
+    "ld": "build/hello/zephyr/linker.cmd",
+    "map_file": "build/hello/zephyr/zephyr.map",
+    "linker_vars": ""
+  },
+  {
+    "target_name": "esp32s3-esp-idf",
+    "setup_cmd": "docker pull espressif/idf:v5.4.1",
+    "build_cmd": "docker run --rm -v \"$PWD:/project\" -w /project espressif/idf:v5.4.1 bash -c \"idf.py -C examples/esp_idf/hello set-target esp32s3 build\"",
+    "elf": "examples/esp_idf/hello/build/hello.elf",
+    "ld": "examples/esp_idf/hello/build/esp-idf/esp_system/ld/memory.ld examples/esp_idf/hello/build/esp-idf/esp_system/ld/sections.ld",
+    "map_file": "examples/esp_idf/hello/build/hello.map",
+    "linker_vars": ""
+  }
+]
